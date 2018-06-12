@@ -1,0 +1,115 @@
+﻿@using SocarWebPage.Controllers
+@using SocarWebPage.Models
+<!DOCTYPE html>
+
+<html>
+<head>
+    <meta charset="utf-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <link href="~/Content/css/materialize.min.css" rel="stylesheet" type="text/css"/>
+    <script type="text/javascript" src="https://code.jquery.com/jquery-2.1.1.min.js"></script>
+    <link href="~/Content/css/imbananko.css" rel="stylesheet" type="text/css"/>
+    <script src="~/Content/js/materialize.min.js"></script>
+    <link href='@Url.Content("~/Content/themes/base/all.css")' rel="stylesheet" type="text/css" />
+    <script src='@Url.Content("~/Scripts/jquery-ui-1.12.1.min.js")' type="text/javascript"></script>
+</head>
+
+<body>
+<main>
+    <nav>
+        <div class="nav-wrapper teal">
+            <div class="container">
+                <a href=@Url.Action("Index", "Home")
+                   class="brand-logo">
+                    SOCAR telegram bots
+                </a>
+                <ul id="nav-mobile" class="right hide-on-med-and-down">
+                    <li>
+                        <a class="btn" href=@Url.Action("Index", "Home")>Home</a>
+                    </li>
+                    <li>
+                        <a class="dropdown-button btn" href='#' data-activates="dropdown1">Contact</a>
+
+                        <ul id="dropdown1" class="dropdown-content">
+                            <li><a href="mailto:imbananko.work@gmail.com?subject=Great job! Here is your offer!">mail</a></li>
+                            <li><a href="https://www.facebook.com/imbananko">facebook</a></li>
+                            <li><a href="https://www.linkedin.com/in/imbananko">linkedin</a></li>
+                            
+                        </ul>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container">
+        <table class="striped">
+            <thead>
+            <tr>
+                <th>Channel name</th>
+                <th>Last post</th>
+                <th>Last alive</th>
+                <th>Auto-posting</th>
+            </tr>
+            </thead>
+            <tbody>
+            @foreach (BotModel b in ViewBag.Bots)
+            {
+                <tr>
+                    <td>
+                        <h6>
+                            <a href="@b.ChannelRef">@b.ChannelName</a>
+                        </h6>
+                    </td>
+                    <td>
+                        <p>@Html.FormatDate(b.LastPostDate) </p>
+                    </td>
+                    <td>
+                        <p>@Html.FormatDate(b.LastCheckDate)</p>
+                    </td>
+                    <td>
+                        <div class="switch">
+                            <label>
+                                <input type="checkbox" @(b.IsActive ? "checked" : "")>
+                                <span class="lever"></span>
+                            </label>
+                        </div>
+                    </td>
+                </tr>
+            }
+            </tbody>
+        </table>
+    </div>
+</main>
+
+<footer class="page-footer teal">
+    <div class="container">
+        <div class="row">
+            <div class="col l8 s12">
+                <p class="grey-text text-lighten-4"> <q>Life isn't about finding yourself. Life is about creating yourself.</q> © <cite>George Bernard Shaw</cite> </p>
+            </div>
+        </div>
+    </div>
+
+    <div class="footer-copyright">
+        <div class="container">
+            © 2018 Feel free to use it.
+            <a class="grey-text text-lighten-4 right" href="http://github.com/imbananko"> by imbananko </a>
+        </div>
+    </div>
+    <script>
+        $(":checkbox").change(function() {
+            var isChecked = $(this).prop('checked');
+            var channelName = $(this).closest('tr').find("td:first").prop('innerText');
+            
+            $.ajax({
+                type: 'POST',
+                url: '@Url.Action("UpdateBotStatus", "Home")',
+                data: { "channelName": channelName, "isChecked": isChecked }
+            });
+        });
+    </script>
+</footer>
+</body>
+</html>
